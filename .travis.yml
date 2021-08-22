@@ -17,6 +17,7 @@ services:
 
 script:
   - test -d /home/travis/gopath/src/github.com/terraform-providers || mv $(dirname $PWD) /home/travis/gopath/src/github.com/terraform-providers
+  - sudo service mysql stop
   - ./testall.sh
 
 matrix:
