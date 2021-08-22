@@ -20,9 +20,9 @@ docker pull $DB
 container_id=$(docker run --rm -d -p ${MYSQL_HOST}:${MYSQL_PORT}:${MYSQL_PORT} -e MYSQL_ALLOW_EMPTY_PASSWORD=1 -e MYSQL_ROOT_PASSWORD='' $DB $DB_EXTRA)
 trap "docker kill $container_id" EXIT
 
-while ! mysql -h${MYSQL_HOST} -P${MYSQL_PORT} -u${MYSQL_USERNAME} -e 'SELECT 1' &> /dev/null; do
+while ! docker container exec $container_id mysql -h${MYSQL_HOST} -P${MYSQL_PORT} -u${MYSQL_USERNAME} -e 'SELECT 1' &> /dev/null; do
     echo 'Waiting for MySQL...'
     sleep 1;
 done;
-mysql -h${MYSQL_HOST} -P${MYSQL_PORT} -u${MYSQL_USERNAME} -e "INSTALL PLUGIN mysql_no_login SONAME 'mysql_no_login.so';"
+docker container exec $container_id mysql -h${MYSQL_HOST} -P${MYSQL_PORT} -u${MYSQL_USERNAME} -e "INSTALL PLUGIN mysql_no_login SONAME 'mysql_no_login.so';"
 make testacc
