@@ -77,7 +77,7 @@ resource "mysql_grant" "test_db2" {
   host       = mysql_user.test.host
   database   = mysql_database.db2.name
   privileges = ["SELECT"]
-  grant = true
+  grant      = true
 }
 `, db1, db2, randInt)
 
@@ -100,6 +100,7 @@ resource "mysql_grant" "test_db2" {
 					resource.TestCheckResourceAttr("mysql_grant.test_db2", "user", fmt.Sprintf("jdoe-%d", randInt)),
 					resource.TestCheckResourceAttr("mysql_grant.test_db2", "host", "example.com"),
 					resource.TestCheckResourceAttr("mysql_grant.test_db2", "database", db2),
+					resource.TestCheckResourceAttr("mysql_grant.test_db1", "table", "*"),
 					resource.TestCheckResourceAttr("mysql_grant.test_db2", "grant", "true"),
 				),
 			},
