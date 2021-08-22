@@ -153,7 +153,7 @@ func supportsRoles(db *sql.DB) (bool, error) {
 	}
 
 	requiredVersion, _ := version.NewVersion("8.0.0")
-	hasRoles := currentVersion.GreaterThan(requiredVersion)
+	hasRoles := currentVersion.GreaterThanOrEqual(requiredVersion)
 	return hasRoles, nil
 }
 
@@ -206,10 +206,7 @@ func CreateGrant(d *schema.ResourceData, meta interface{}) error {
 		grantOn = fmt.Sprintf(" ON %s.%s", database, table)
 	}
 
-	stmtSQL := fmt.Sprintf("GRANT %s%s TO %s",
-		privilegesOrRoles,
-		grantOn,
-		userOrRole)
+	stmtSQL := fmt.Sprintf("GRANT %s%s TO %s", privilegesOrRoles, grantOn, userOrRole)
 
 	// MySQL 8+ doesn't allow REQUIRE on a GRANT statement.
 	if !hasRoles && d.Get("tls_option").(string) != "" {
