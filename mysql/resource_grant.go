@@ -168,10 +168,7 @@ func CreateGrant(d *schema.ResourceData, meta interface{}) error {
 		return err
 	}
 
-	var (
-		privilegesOrRoles string
-		grantOn           string
-	)
+	var privilegesOrRoles string
 
 	hasPrivs := false
 	rolesGranted := 0
@@ -202,6 +199,7 @@ func CreateGrant(d *schema.ResourceData, meta interface{}) error {
 
 	table := formatTableName(d.Get("table").(string))
 
+	var grantOn string
 	if (!isRole || hasPrivs) && rolesGranted == 0 {
 		grantOn = fmt.Sprintf(" ON %s.%s", database, table)
 	}
