@@ -3,7 +3,6 @@
 set -eux
 
 echo $DB
-echo $DB_EXTRA
 
 make test
 make vet
@@ -13,7 +12,7 @@ export MYSQL_USERNAME=root
 export MYSQL_ENDPOINT="${MYSQL_HOST}:${MYSQL_PORT}"
 export MYSQL_PASSWORD=''
 docker pull $DB
-container_id=$(docker run --rm -d -p ${MYSQL_HOST}:${MYSQL_PORT}:${MYSQL_PORT} -e MYSQL_ALLOW_EMPTY_PASSWORD=1 -e MYSQL_ROOT_PASSWORD='' $DB $DB_EXTRA)
+container_id=$(docker run --rm -d -p ${MYSQL_HOST}:${MYSQL_PORT}:${MYSQL_PORT} -e MYSQL_ALLOW_EMPTY_PASSWORD=1 -e MYSQL_ROOT_PASSWORD='' $DB)
 trap "docker kill $container_id" EXIT
 
 while ! mysql -h${MYSQL_HOST} -P${MYSQL_PORT} -u${MYSQL_USERNAME} -e 'SELECT 1' &> /dev/null; do
