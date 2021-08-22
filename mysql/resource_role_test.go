@@ -90,7 +90,7 @@ func testAccRoleCheckDestroy(roleName string) resource.TestCheckFunc {
 			return err
 		}
 
-		count, err := testAccGetRoleGrantCount(roleName, db)
+		count, _ := testAccGetRoleGrantCount(roleName, db)
 		if count > 0 {
 			return fmt.Errorf("Role %s still has grants/exists", roleName)
 		}
