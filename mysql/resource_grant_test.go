@@ -355,7 +355,6 @@ resource "mysql_role" "test" {
 resource "mysql_grant" "test" {
   user     = "${mysql_user.jdoe.user}"
   host     = "${mysql_user.jdoe.host}"
-  database = "${mysql_database.test.name}"
   roles    = ["${mysql_role.test.name}"]
 }
 `, dbName, dbName, roleName)

@@ -54,46 +54,51 @@ func resourceGrant() *schema.Resource {
 			},
 
 			"database": {
-				Type:     schema.TypeString,
-				Required: true,
-				ForceNew: true,
+				Type:          schema.TypeString,
+				Optional:      true,
+				ForceNew:      true,
+				ConflictsWith: []string{"roles"},
 			},
 
 			"table": {
-				Type:     schema.TypeString,
-				Optional: true,
-				ForceNew: true,
-				Default:  "*",
+				Type:          schema.TypeString,
+				Optional:      true,
+				ForceNew:      true,
+				Default:       "*",
+				ConflictsWith: []string{"roles"},
 			},
 
 			"privileges": {
-				Type:     schema.TypeSet,
-				Optional: true,
-				Elem:     &schema.Schema{Type: schema.TypeString},
-				Set:      schema.HashString,
+				Type:          schema.TypeSet,
+				Optional:      true,
+				Elem:          &schema.Schema{Type: schema.TypeString},
+				Set:           schema.HashString,
+				ConflictsWith: []string{"roles"},
 			},
 
 			"roles": {
 				Type:          schema.TypeSet,
 				Optional:      true,
 				ForceNew:      true,
-				ConflictsWith: []string{"privileges"},
+				ConflictsWith: []string{"database", "table", "privileges", "grant", "tls_option"},
 				Elem:          &schema.Schema{Type: schema.TypeString},
 				Set:           schema.HashString,
 			},
 
 			"grant": {
-				Type:     schema.TypeBool,
-				Optional: true,
-				ForceNew: true,
-				Default:  false,
+				Type:          schema.TypeBool,
+				Optional:      true,
+				ForceNew:      true,
+				Default:       false,
+				ConflictsWith: []string{"roles"},
 			},
 
 			"tls_option": {
-				Type:     schema.TypeString,
-				Optional: true,
-				ForceNew: true,
-				Default:  "NONE",
+				Type:          schema.TypeString,
+				Optional:      true,
+				ForceNew:      true,
+				Default:       "NONE",
+				ConflictsWith: []string{"roles"},
 			},
 		},
 	}
