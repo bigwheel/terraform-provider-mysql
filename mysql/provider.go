@@ -29,7 +29,7 @@ type MySQLConfiguration struct {
 	Config                 *mysql.Config
 	MaxConnLifetime        time.Duration
 	MaxOpenConns           int
-	ConnectRetryTimeoutSec time.Duration
+	ConnectRetryTimeoutSec time.Duration //lint:ignore ST1011 warning rearson is too nervous
 	db                     *sql.DB
 }
 
@@ -54,7 +54,7 @@ func Provider() terraform.ResourceProvider {
 				ValidateFunc: func(v interface{}, k string) (ws []string, errors []error) {
 					value := v.(string)
 					if value == "" {
-						errors = append(errors, fmt.Errorf("Endpoint must not be an empty string"))
+						errors = append(errors, fmt.Errorf("endpoint must not be an empty string"))
 					}
 
 					return
@@ -80,7 +80,7 @@ func Provider() terraform.ResourceProvider {
 					"ALL_PROXY",
 					"all_proxy",
 				}, nil),
-				ValidateFunc: validation.StringMatch(regexp.MustCompile("^socks5h?://.*:\\d+$"), "The proxy URL is not a valid socks url."),
+				ValidateFunc: validation.StringMatch(regexp.MustCompile(`^socks5h?://.*:\d+$`), "The proxy URL is not a valid socks url."),
 			},
 
 			"tls": {
@@ -245,7 +245,7 @@ func connectToMySQL(conf *MySQLConfiguration) (*sql.DB, error) {
 	})
 
 	if retryError != nil {
-		return nil, fmt.Errorf("Could not connect to server: %s", retryError)
+		return nil, fmt.Errorf("could not connect to server: %s", retryError)
 	}
 	db.SetConnMaxLifetime(conf.MaxConnLifetime)
 	db.SetMaxOpenConns(conf.MaxOpenConns)

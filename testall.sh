@@ -3,7 +3,11 @@
 set -eux
 
 echo $DB
-echo $DB_EXTRA
+if [ "$DB" = "mysql:8.0" ]; then
+    DB_EXTRA='mysqld --default-authentication-plugin=mysql_native_password'
+else
+    DB_EXTRA=''
+fi
 
 make test
 make vet
