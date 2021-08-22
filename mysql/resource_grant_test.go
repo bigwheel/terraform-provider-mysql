@@ -85,23 +85,7 @@ func TestAccGrant_role(t *testing.T) {
 	dbName := fmt.Sprintf("tf-test-%d", rand.Intn(100))
 	roleName := fmt.Sprintf("TFRole%d", rand.Intn(100))
 	resource.Test(t, resource.TestCase{
-		PreCheck: func() {
-			testAccPreCheck(t)
-			db, err := connectToMySQL(testAccProvider.Meta().(*MySQLConfiguration))
-			if err != nil {
-				return
-			}
-
-			requiredVersion, _ := version.NewVersion("8.0.0")
-			currentVersion, err := serverVersion(db)
-			if err != nil {
-				return
-			}
-
-			if currentVersion.LessThan(requiredVersion) {
-				t.Skip("Roles require MySQL 8+")
-			}
-		},
+		PreCheck:     MysqlVersionPrecheck(t),
 		Providers:    testAccProviders,
 		CheckDestroy: testAccGrantCheckDestroy,
 		Steps: []resource.TestStep{
@@ -115,28 +99,32 @@ func TestAccGrant_role(t *testing.T) {
 	})
 }
 
+func MysqlVersionPrecheck(t *testing.T) func() {
+	return func() {
+		testAccPreCheck(t)
+		db, err := connectToMySQL(testAccProvider.Meta().(*MySQLConfiguration))
+		if err != nil {
+			return
+		}
+
+		requiredVersion, _ := version.NewVersion("8.0.0")
+		currentVersion, err := serverVersion(db)
+		if err != nil {
+			return
+		}
+
+		if currentVersion.LessThan(requiredVersion) {
+			t.Skip("Roles require MySQL 8+")
+		}
+	}
+}
+
 func TestAccGrant_roleToUser(t *testing.T) {
 	rand.Seed(time.Now().UnixNano())
 	dbName := fmt.Sprintf("tf-test-%d", rand.Intn(100))
 	roleName := fmt.Sprintf("TFRole%d", rand.Intn(100))
 	resource.Test(t, resource.TestCase{
-		PreCheck: func() {
-			testAccPreCheck(t)
-			db, err := connectToMySQL(testAccProvider.Meta().(*MySQLConfiguration))
-			if err != nil {
-				return
-			}
-
-			requiredVersion, _ := version.NewVersion("8.0.0")
-			currentVersion, err := serverVersion(db)
-			if err != nil {
-				return
-			}
-
-			if currentVersion.LessThan(requiredVersion) {
-				t.Skip("Roles require MySQL 8+")
-			}
-		},
+		PreCheck:     MysqlVersionPrecheck(t),
 		Providers:    testAccProviders,
 		CheckDestroy: testAccGrantCheckDestroy,
 		Steps: []resource.TestStep{
