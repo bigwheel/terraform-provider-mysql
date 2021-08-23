@@ -58,4 +58,19 @@ test-compile:
 	fi
 	go test -c $(TEST) $(TESTARGS)
 
-.PHONY: build test testacc vet fmt fmtcheck errcheck vendor-status test-compile
+
+export DB?=mysql:8.0
+export MYSQL_HOST?=127.0.0.1
+export MYSQL_PORT?=3306
+export MYSQL_ENDPOINT?="$(MYSQL_HOST):$(MYSQL_PORT)"
+export MYSQL_USERNAME?=root
+export MYSQL_PASSWORD?=''
+export CONTAINER_NAME?=terraform-provider-mysql
+
+setup-db:
+	./setup-db.sh
+
+teardown-db:
+	docker container kill $(CONTAINER_NAME)
+
+.PHONY: build test testacc vet fmt fmtcheck errcheck vendor-status test-compile setup-db teardown-db
