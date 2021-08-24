@@ -21,10 +21,6 @@ test: fmtcheck
 	echo $(TEST) | \
 		xargs -t -n4 go test $(TESTARGS) -timeout=30s -parallel=4
 
-testacc: fmtcheck
-	go clean -testcache
-	TF_ACC=1 go test $(TEST) -v $(TESTARGS) -timeout 120m
-
 vet:
 	@echo "go vet ."
 	@go vet $$(go list ./... | grep -v vendor/) ; if [ $$? -eq 1 ]; then \
@@ -58,4 +54,23 @@ test-compile:
 	fi
 	go test -c $(TEST) $(TESTARGS)
 
-.PHONY: build test testacc vet fmt fmtcheck errcheck vendor-status test-compile
+
+export DB?=mysql:8.0
+export MYSQL_HOST?=127.0.0.1
+export MYSQL_PORT?=3306
+export MYSQL_ENDPOINT?=$(MYSQL_HOST):$(MYSQL_PORT)
+export MYSQL_USERNAME?=root
+export MYSQL_PASSWORD?=
+export CONTAINER_NAME?=terraform-provider-mysql
+
+testacc: fmtcheck
+	go clean -testcache
+	TF_ACC=1 go test $(TEST) -v $(TESTARGS) -timeout 120m
+
+setup-db:
+	./setup-db.sh
+
+teardown-db:
+	docker container kill $(CONTAINER_NAME)
+
+.PHONY: build test testacc vet fmt fmtcheck errcheck vendor-status test-compile setup-db teardown-db
